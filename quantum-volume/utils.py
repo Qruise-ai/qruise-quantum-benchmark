@@ -32,7 +32,7 @@ def _get_heavy_outputs(counts):
     heavy_outputs = sorted_counts[len(sorted_counts)//2:]
     return heavy_outputs
 
-def quantum_volume(device, nqubits, ncircuits, nshots, use_backend_properties=True):
+def quantum_volume(device, nqubits, ncircuits, nshots, use_backend_properties=False):
     """Try to achieve 2**nqubits quantum volume on device.
     Args:
         device (qiskit.providers.Backend): Device to test.
@@ -55,7 +55,8 @@ def quantum_volume(device, nqubits, ncircuits, nshots, use_backend_properties=Tr
         if use_backend_properties:
             t_circuit = transpile(circuit, backend)
         else:
-            t_circuit = transpile(circuit, basis_gates=backend.configuration().basis_gates)
+            # t_circuit = transpile(circuit, basis_gates=backend.configuration().basis_gates)
+            t_circuit = transpile(circuit, basis_gates=["rx", "ry", "cz"], optimization_level=3)
         job = backend.run(t_circuit,
                           shots=shots,
                           memory=True)
